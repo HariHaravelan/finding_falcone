@@ -12,6 +12,8 @@ import {buildFindRequest} from "../api/FindRequest";
 import {useHistory} from "react-router";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Destination from "./Destination";
+import Vehicles from "./Vehicles";
 
 const styles = ({
     content: {
@@ -65,7 +67,7 @@ const LaunchPad = (props) => {
 
     const redirectToResultPage = () => history.push(`/result`);
 
-    const addSelectedVehicles = (event, index, planetDistance) => {
+    const addSelectedVehicles = (event, index) => {
         const allSelectedVehicles = [...selectedVehicles];
         const previousVehicle = selectedVehicles[index] &&
             vehicles.filter(vehicle => vehicle.name === selectedVehicles[index].name)[0];
@@ -74,7 +76,7 @@ const LaunchPad = (props) => {
         updateAvailableVehicles(currentVehicle, previousVehicle);
         allSelectedVehicles[index] = currentVehicle;
         setSelectedVehicles(allSelectedVehicles);
-        updateTimeTaken(planetDistance, currentVehicle, previousVehicle);
+        updateTimeTaken(selectedPlanets[index].distance, currentVehicle, previousVehicle);
     };
 
     const updateAvailableVehicles = (currentVehicle, previousVehicle) => {
@@ -108,13 +110,13 @@ const LaunchPad = (props) => {
 
     const addSelectedPlanets = (event, index) => {
         const allSelectedPlanets = [...selectedPlanets];
-        allSelectedPlanets[index] = event.target.innerHTML;
+        allSelectedPlanets[index] = planets.filter((planet) => planet.name === event.target.innerHTML)[0];
         setSelectedPlanets(allSelectedPlanets);
-        setAvailablePlanets(planets.filter((planet) => !allSelectedPlanets.includes(planet.name)));
+        setAvailablePlanets(planets.filter((planet) => !allSelectedPlanets.map(planet => planet.name).includes(planet.name)));
     };
 
     const findFalcone = () => {
-        const selectedPlanetNames = [...selectedPlanets];
+        const selectedPlanetNames = [...selectedPlanets].map(planet => planet.name);
         const selectedVehicleNames = [...selectedVehicles].map(vehicle => vehicle.name);
         setInProgress(true);
         getToken()
@@ -163,10 +165,12 @@ const LaunchPad = (props) => {
                 {_.times(NUMBER_OF_PLANETS_TO_SEARCH, (index) => {
                     return (
                         <Grid item xs={3} key={index}>
-                            <JourneyPlan index={index} planets={availablePlanets} vehicles={availableVehicles}
-                                         onDestinationChange={addSelectedPlanets}
-                                         onVehicleChange={addSelectedVehicles}
-                            />
+                            <JourneyPlan currentPlanet={selectedPlanets[index]}>
+                                <Destination index={index} planets={availablePlanets}
+                                             onDestinationChange={addSelectedPlanets}/>
+                                <Vehicles index={index} vehicles={availableVehicles} planet={selectedPlanets[index]}
+                                          onVehicleChange={addSelectedVehicles}/>
+                            </JourneyPlan>
                         </Grid>);
                 })}
             </Grid>

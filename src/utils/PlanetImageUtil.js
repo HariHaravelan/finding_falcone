@@ -11,5 +11,5 @@ const planetImages = {
 };
 
 export const getPlanetImage = (name) => {
-  return planetImages[name] ? planetImages[name] : planetImages["NoPlanet"];
+    return planetImages[name] ? planetImages[name] : planetImages["NoPlanet"];
 };

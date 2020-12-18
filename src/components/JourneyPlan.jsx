@@ -1,22 +1,11 @@
-import React, {useState} from 'react';
-import Destination from "./Destination";
-import Vehicles from "./Vehicles";
+import React, {useEffect, useState} from 'react';
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {getPlanetImage} from "../utils/PlanetImageUtil";
 
 
-const JourneyPlan = ({index, planets, onDestinationChange, vehicles, onVehicleChange}) => {
-
-    const [showVehicles, setShowVehicles] = useState(false);
-    const [currentPlanet, setCurrentPlanet] = useState({});
-
-    const changeDestination = (event, index) => {
-        setShowVehicles(event.target.innerHTML.length !== 0);
-        setCurrentPlanet(planets.filter(planet => planet.name === event.target.innerHTML)[0]);
-        onDestinationChange(event, index);
-    };
+const JourneyPlan = ({currentPlanet, children}) => {
 
     return (
         <Card style={{height: 470}}>
@@ -26,10 +15,7 @@ const JourneyPlan = ({index, planets, onDestinationChange, vehicles, onVehicleCh
                 title={currentPlanet?.name}
             />
             <CardContent>
-                <Destination index={index} planets={planets}
-                             onDestinationChange={changeDestination}/>
-                {showVehicles && <Vehicles index={index} vehicles={vehicles} travelDistance={currentPlanet?.distance}
-                                           onVehicleChange={onVehicleChange}/>}
+                {children}
             </CardContent>
         </Card>
 
